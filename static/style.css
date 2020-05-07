@@ -3,17 +3,29 @@
 	margin-top: 50px;
 }
 
-section{
+.login-signup{
+	margin-top: 100px;
+}
+
+.container form{
+	width: 50%;
+	margin: 0 auto;
+	padding: 20px;
+	border:1px solid #d3d3d3;
+	border-radius: 5px;
+}
+
+.profile{
 	margin: 200px 0px 0px 50px;
 	font-size: 16px;
 }
 
-section p{
+.profile p{
 	margin-left: 100px;
 	margin-right: 100px;
 }
 
-section img{
+.profile img{
 	margin-right: 50px;
 	height: 150px;
 	width: 150px;
