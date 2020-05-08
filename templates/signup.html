@@ -7,22 +7,40 @@
 </head>
 <body>
 	<div class="container">
-		<a href="/signup"><button type="button" class="btn btn-secondary state_change">SignUp</button></a>
+		<a href="/login"><button type="button" class="btn btn-secondary state_change">Login</button></a>
 		<center><h2>Pratilipi Professional Space</h2></center>
 		<div class="login-signup">
 			{% if message %}
 				<p class="message">{{ message | safe }}</p>
 			{% endif %}
-			<form class="login-form" action="/login" method="POST">
+			<form class="login-form" action="/signup" enctype=multipart/form-data method="POST">
 				<div class="form-group">
 					<label>Email</label>
 					<input type="email" name="email" class="form-control" placeholder="Enter Email">
 					<small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
-			  </div>
-			  <div class="form-group">
+				</div>
+				<div class="form-group">
+					<label>Full Name</label>
+					<input type="text" name="name" class="form-control" placeholder="Enter Full Name">
+				</div>
+				<div class="form-group">
+					<label>Job Role</label>
+					<input type="text" name="job_role" class="form-control" placeholder="Enter Job Role">
+				</div>
+				<div class="form-group">
+					<label>Company Name</label>
+					<input type="text" name="company_name" class="form-control" placeholder="Enter Company Name">
+				</div>
+
+				<div class="form-group">
 					<label>Password</label>
 					<input type="password" name="password" class="form-control" placeholder="Password">
-			  </div>
+				</div>
+				
+				<div class="form-group">
+					<label>Profile Photo</label>
+					<input type=file name=photo class="form-control">
+				</div>
 			  <button type="submit" class="btn btn-primary">Submit</button>
 			</form>	
 		</div>

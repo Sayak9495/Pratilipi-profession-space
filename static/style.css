@@ -7,7 +7,7 @@
 	margin-top: 100px;
 }
 
-.container form{
+.container .login-form{
 	width: 50%;
 	margin: 0 auto;
 	padding: 20px;
@@ -25,10 +25,23 @@
 	margin-right: 100px;
 }
 
+.login-signup p{
+	text-align: center;
+}
+
 .profile img{
 	margin-right: 50px;
 	height: 150px;
 	width: 150px;
 	border-radius: 150px;
 	float: left;
+}
+
+.state_change{
+	float: right;
+	margin-left: 10px;
+}
+
+a {
+	text-decoration: none;
 }
