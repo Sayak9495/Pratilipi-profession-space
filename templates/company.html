@@ -4,6 +4,12 @@
 	<title>Profession Space</title>
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 	<link rel="stylesheet" href="../static/style.css">
+	<script src="../static/script.js"></script>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+	<script type="text/javascript">
+            var company_name = "{{ data.name }}";
+            var email = "{{ g.email }}";
+     </script>
 </head>
 <body>
 	<div class="container">
@@ -13,12 +19,13 @@
 				<input class="form-control mr-sm-2" type="search" placeholder="Search Company" name="company_name" aria-label="Search">
 				<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
 		</form>
-		<h2>Professional-Space</h2>
+		<h2>Company-Space</h2>
 		<div class="profile">
-			<img src="{{ data.profile_img_path }}">
-			<p> Name: <b>{{ data.name}}</b> </p>
-			<p> Job-Role: <b>{{ data.job_role}}</b> </p>
-			<p> Company Name: <b><a href="{{ '/company/'~data.company_name }}"> {{data.company_name }}</b> </a></p>
+			<img src="{{ data.logo_path }}">
+			<p> Company Name: <b>{{ data.name }}</b> </p>	
+			<p> Company Address: <b>{{ data.address }}</b> </p>
+			<p> Total Company View: <b>{{ data.total_views }}</b> </p>
+			<p> Unique Users vising now: <b>{{ data.live_unique_view }}</b> </p>
 		</div>
 	</div>
 </body>
