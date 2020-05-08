@@ -11,17 +11,18 @@ app.secret_key = 'qweqweqsfdqwfsdsghjyujlmbnvou'
 photos = UploadSet('photos', IMAGES)
 app.config['UPLOADED_PHOTOS_DEST'] = 'static/img/profile/'
 configure_uploads(app, photos)
-ENV = 'dev'
+ENV = 'prod'
 if ENV == 'dev':
 	app.debug = True
 	app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://sayaksen:sayaksen@localhost/pratilipi'
 else:
 	app.debug = False
-	app.config['SQLALCHEMY_DATABASE_URI'] = ''
+	app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://cxfwjhdlyghphy:35f35daf343c82c5d8cc51e1976924f9b8488a206444846bf0672e2860dd5875@ec2-18-233-137-77.compute-1.amazonaws.com:5432/dcqnq6tpmk9dk6'
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
+# ---------------- DB MODELS ----------------------
 class Auth(db.Model):
 	__tablename__ = 'user_auth'
 	email = db.Column(db.String(), primary_key=True)
@@ -88,6 +89,8 @@ class Spacex(db.Model):
 
 company_list = {"Pratilipi": Pratilipi, "Tesla": Tesla, "Spacex": Spacex}
 
+
+# ---------------- APP ROUTES ----------------------
 @app.before_request
 def before_request():
 	#get all infos from db here
@@ -99,14 +102,6 @@ def before_request():
 def index():
 	return redirect(url_for('login'))
 
-@app.route("/home")
-def home():
-	if not g.email:
-		return redirect(url_for('signup'))
-	data = db.session.query(Users).filter(Users.email == g.email)[0]
-	data.profile_img_path = app.config['UPLOADED_PHOTOS_DEST']+data.profile_img_path
-	return render_template('home.html', data=data)
-
 @app.route("/signup", methods=['GET', 'POST'])
 def signup():
 	if (request.method == 'POST'):
@@ -116,30 +111,27 @@ def signup():
 		company_name = request.form['company_name']
 		password = request.form['password']
 		file_name = request.files['photo']
-		if(email=='' or name=='' or job_role=='' or company_name=='' or file_name==''):
+		if(email=='' or name=='' or job_role=='' or company_name=='' or file_name.filename==''):
 			return render_template('signup.html', message="Empty string not accepted. Please try again.")
 		if ((db.session.query(Users).filter(Users.email == email)).count() == 0):
-			
-			profile_img_path = email+".png"
-			filename = photos.save(file_name, name=profile_img_path)
-			
-			password = sha256_crypt.encrypt(password)
-			auth_data = Auth(email, password)
-			db.session.add(auth_data)
-			db.session.commit()
+			if ((db.session.query(Company).filter(Company.name == company_name)).count()):
+				profile_img_path = email+".png"
+				filename = photos.save(file_name, name=profile_img_path)
+				
+				password = sha256_crypt.encrypt(password)
+				auth_data = Auth(email, password)
+				db.session.add(auth_data)
+				db.session.commit()
 
-			profile_data = Users(email, name, job_role, company_name, profile_img_path)
-			db.session.add(profile_data)
-			db.session.commit()
-			return render_template('login.html', message="Regestration Successfull. Please Login...")
+				profile_data = Users(email, name, job_role, company_name, profile_img_path)
+				db.session.add(profile_data)
+				db.session.commit()
+				return render_template('login.html', message="Regestration Successfull. Please Login...")
+			else:
+				return 	render_template('signup.html', message="Company Name not registered. Please try with Pratilipi or Spacex or Tesla")
 		else:
 			return render_template('signup.html', message="Email Already exists. Try Logging in.")
 	return render_template('signup.html')
-
-@app.route("/logout")
-def logout():
-	session.pop('email', None)
-	return render_template('login.html')
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
@@ -162,6 +154,14 @@ def login():
 
 	return render_template('login.html')
 
+@app.route("/home")
+def home():
+	if not g.email:
+		return redirect(url_for('signup'))
+	data = db.session.query(Users).filter(Users.email == g.email)[0]
+	data.profile_img_path = app.config['UPLOADED_PHOTOS_DEST']+data.profile_img_path
+	return render_template('home.html', data=data)
+
 @app.route("/company/<name>")
 def company(name):
 	global company_list
@@ -172,9 +172,7 @@ def company(name):
 		data=data.first()
 		data.total_views +=1
 		db.session.commit()
-		print("&&&&&&&&&", name)
 		data.live_unique_view = len(db.session.query(company_list.get(name)).all())
-		#data.live_unique_view = 10
 		return render_template('company.html', data=data)
 	return redirect(url_for('home'))
 
@@ -187,6 +185,11 @@ def company_search():
 		data = db.session.query(Company).filter(Company.name.like(company_name + "%")).all()
 		return render_template('company_search.html', data=data)
 	return redirect(url_for('home'))
+
+@app.route("/logout")
+def logout():
+	session.pop('email', None)
+	return render_template('login.html')
 
 @app.route("/active_user")
 def active_user():
@@ -205,7 +208,6 @@ def active_user():
 		db.session.commit()
 	return ""
 
-
 def delete_data():
 	global company_list
 	expiration_time = 10
@@ -214,10 +216,21 @@ def delete_data():
 		db.session.query(company_list.get(company_name)).filter(company_list.get(company_name).date_time < limit).delete()
 		db.session.commit()
 	threading.Timer(expiration_time, delete_data).start()
-	
+
+# Insert sample company data for testing
+def add_company():
+	pratilipi_data = Company("Pratilipi", "Hosur Main Road, Bangalore, Karnataka 560029", 0, "https://media.glassdoor.com/sqll/1454725/pratilipi-squarelogo-1481798656702.png")
+	tesla_data = Company("Tesla", "Palo Alto, California, United States", 0, "https://www.logocentral.info/wp-content/uploads/2020/04/Tesla-Logo-640X590.jpg")
+	spacex_data = Company("Spacex", "Hawthorne, California, United States", 0, "https://cdn.dribbble.com/users/610788/screenshots/5157282/spacex.png")
+	db.session.add(pratilipi_data)
+	db.session.add(tesla_data)
+	db.session.add(spacex_data)
+	db.session.commit()
+
+db.create_all()
+add_company()
+delete_data()
+db.session.commit()
 
 if __name__ == "__main__":
-	db.create_all()
-	delete_data()
-	db.session.commit()
 	app.run(debug=True)

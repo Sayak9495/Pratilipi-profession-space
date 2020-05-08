@@ -13,12 +13,12 @@
 				<input class="form-control mr-sm-2" type="search" placeholder="Search Company" name="company_name" aria-label="Search">
 				<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
 		</form>
-		<h2>Professional Space</h2>
+		<h2>Professional-Space</h2>
 		<div class="profile">
 			<img src="{{ data.profile_img_path }}">
-			<p> {{ data.name}} </p>
-			<p> {{ data.job_role}} </p>
-			<p> <a href="{{ '/company/'~data.company_name }}"> {{data.company_name }} </a></p>
+			<p> Name: <b>{{ data.name}}</b> </p>
+			<p> Job-Role: <b>{{ data.job_role}}</b> </p>
+			<p> Company Name: <b><a href="{{ '/company/'~data.company_name }}"> {{data.company_name }}</b> </a></p>
 		</div>
 	</div>
 </body>

@@ -1,17 +1,13 @@
-// function()
-// {
-//     $.ajax({
-//         type: "get",
-//         url: "/active_user?company_name="+company_name+"&email="+email,
-//         success:function(data)
-//         {
-//             //console.log the response
-//             console.log(company_name);
-//         }
-//     });
-// }
+document.addEventListener('DOMContentLoaded', function() 
+{
+    const Http = new XMLHttpRequest();
+    const url="/active_user?company_name="+company_name;
+    Http.open("GET", url);
+    Http.send();
+});
 
-// Set a ttl email in table which gets deleted after 30 seconds, and if the user is still active update ttl to 30
+// In comany db, every 10 second older data(older than 10sec) will be deleted (ttl simulation, aersopike bettwe option).
+// and this function keeps the timestamp updated, if user is active. 
 
 setInterval(function()
 {
@@ -20,7 +16,6 @@ setInterval(function()
         url: "/active_user?company_name="+company_name,
         success:function(data)
         {
-            //console.log the response
             console.log(company_name);
         }
     });
