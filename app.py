@@ -228,9 +228,8 @@ def add_company():
 	db.session.commit()
 
 db.create_all()
-add_company()
+#add_company()
 delete_data()
-db.session.commit()
 
 if __name__ == "__main__":
 	app.run(debug=True)
